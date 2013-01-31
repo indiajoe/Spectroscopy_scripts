@@ -18,7 +18,7 @@ def Spectroscopy() :
     iraf.apall.unlearn()
     iraf.apsum.unlearn()
     iraf.reidentify.unlearn()
-
+    iraf.apextract.setParam('dispaxis',DISPAXIS)
     iraf.cd(MotherDIR)
     try :
         directories=open(MotherDIR+'/directories','r')
@@ -37,6 +37,7 @@ def Spectroscopy() :
         for starline in fooStars.readlines():
             starline=starline.rstrip()
             img=starline.split()[0]
+            pyfits.convenience.setval(img,'DISPAXIS',DISPAXIS)
             print("Working on image "+direc+" "+starline)
             # Running apall
             iraf.apall(input=img,nfind=1,b_sample=BACKGROUND,background ='fit',weights ='variance',readnoi=READNOISE,gain=EPADU,t_function=TRACEFUNC,t_order=TRACEORDER,t_niterate=1,ylevel=APPERTURE,interactive=VER)   
@@ -157,6 +158,7 @@ def Lamp_identify_subrout() :
     iraf.apall.unlearn()
     iraf.apsum.unlearn()
     iraf.identify.unlearn()
+    iraf.apextract.setParam('dispaxis',DISPAXIS)
 
     #Copy a good same size star spctra to quickly get a referance image for calibrating lamp.
     #For each Grism we will take star spectra of that grism.
@@ -475,6 +477,9 @@ for con in configfile.readlines():
             NORMFUNC=con.split()[1]
         elif con.split()[0] == "NORMORDER=" :
             NORMORDER=con.split()[1]
+        elif con.split()[0] == "DISPAXIS=" :
+            DISPAXIS=con.split()[1]
+
        
         elif con.split()[0] == "EXPTIME=" :
             EXPTIMEHDR=con.split()[1]
